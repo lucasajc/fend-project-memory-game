@@ -1,7 +1,10 @@
 /*
  * Create a list that holds all of your cards
  */
+const numberOfCards = 16;
+const images = ["fa fa-diamond","fa fa-paper-plane-o","fa fa-anchor","fa fa-bolt","fa fa-cube","fa fa-bicycle","fa fa-bomb","fa fa-leaf"];
 
+let opennedCards = [];
 
 /*
  * Display the cards on the page
@@ -9,6 +12,98 @@
  *   - loop through each card and create its HTML
  *   - add each card's HTML to the page
  */
+
+ function lockCards(lock){
+   let cardsElements = document.getElementsByClassName("card");
+   for(i=0;i<numberOfCards;i++){
+     //Lock
+     if(lock){
+       cardsElements[i].removeEventListener("click", showCard)
+     }
+     //Unlock
+     else{
+       cardsElements[i].addEventListener("click", showCard);
+     }
+   }
+ }
+
+
+ function showCard(){
+   this.classList.add("open");
+   this.classList.add("show");
+
+   if((opennedCards.length == 0)&&(table.cards[this.id].open==false)){
+     opennedCards[0] = this.id;
+     table.cards[this.id].open = true;
+   }
+   else if((opennedCards.length == 1)&&(table.cards[this.id].open==false)){
+     opennedCards[1] = this.id;
+     table.cards[this.id].open = true;
+
+     //Lock the deck
+     lockCards(true);
+
+     setTimeout(function() {
+       for(i=0;i<opennedCards.length;i++){
+         if(table.cards[opennedCards[0]].symbol != table.cards[opennedCards[1]].symbol){
+           table.cards[opennedCards[i]].open = false;
+           document.getElementById(opennedCards[i]).classList.remove('open');
+           document.getElementById(opennedCards[i]).classList.remove('show');
+         }
+         else{
+           table.cards[opennedCards[i]].open = true;
+           document.getElementById(opennedCards[i]).classList.add('match');
+         }
+       }
+       opennedCards = [];
+
+       //Unlock the deck
+       lockCards(false);
+
+     }, 1000);
+   }
+ }
+
+ let Table = function(size){
+     let obj = Object.create(Table.prototype);
+     obj.size = size;
+     obj.cards = new Array();
+     obj.deck = document.getElementById("deck");
+     return obj;
+ }
+ Table.prototype.fillIn = function(){
+
+   let imagesArray = [];
+
+   for(i=0;i<(this.size/2);i++){
+     imagesArray[i]=images[i];
+     imagesArray[i+(this.size/2)]=images[i];
+   }
+
+   imagesArray = shuffle(imagesArray);
+
+   for(i=0;i<this.size;i++){
+     this.cards[i] = Card(imagesArray[i]);
+     document.getElementById("deck").innerHTML+='<li class="card" id="'+i+'"><i class="'+imagesArray[i]+'"></i></li>';
+   }
+
+   let cardsElements = document.getElementsByClassName("card");
+
+   for(i=0;i<this.size;i++){
+     cardsElements[i].addEventListener("click", showCard);
+   }
+ }
+
+let Card = function(symbol){
+    let obj = Object.create(Card.prototype);
+    obj.open = false;
+    obj.symbol = symbol;
+    return obj;
+}
+
+let table = Table(numberOfCards);
+table.fillIn();
+
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -20,6 +115,7 @@ function shuffle(array) {
         temporaryValue = array[currentIndex];
         array[currentIndex] = array[randomIndex];
         array[randomIndex] = temporaryValue;
+        //Object.
     }
 
     return array;
