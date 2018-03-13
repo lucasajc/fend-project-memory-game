@@ -5,6 +5,11 @@ const numberOfCards = 16;
 const images = ["fa fa-diamond","fa fa-paper-plane-o","fa fa-anchor","fa fa-bolt","fa fa-cube","fa fa-bicycle","fa fa-bomb","fa fa-leaf"];
 
 let opennedCards = [];
+let moveCounter = 0;
+let stars = 0;
+let running = false;
+
+document.getElementById("restart").addEventListener("click", restart);
 
 /*
  * Display the cards on the page
@@ -12,6 +17,62 @@ let opennedCards = [];
  *   - loop through each card and create its HTML
  *   - add each card's HTML to the page
  */
+
+ function testVictory(){
+   let cardsRemaining = numberOfCards;
+
+   for(i=0;i<numberOfCards;i++){
+      if(table.cards[i].open == true){
+        cardsRemaining--;
+      }
+   }
+
+   if(cardsRemaining == 0){
+
+     if((moveCounter<=20)&&(moveCounter>=0)){
+       stars = 3;
+     }
+     else if((moveCounter<=25)&&(moveCounter>20)){
+       stars = 2;
+     }
+     else{
+       stars = 1;
+     }
+
+     window.confirm("Victory! Stars: "+stars);
+     restart();
+   }
+
+ }
+
+ function restart(){
+   //unlock the cards
+   lockCards(false);
+
+   //clear components and variables
+   document.getElementById("deck").innerHTML='';
+   opennedCards = [];
+   moveCounter = -1;
+   incrementMove();
+   running = false;
+   window.clearInterval(interv);
+   restartCronometer();
+
+   //close all cards
+   for(i=0;i<numberOfCards;i++){
+      table.cards[i].open = false;
+   }
+
+   //refill the table
+   table.fillIn();
+ }
+
+ function incrementMove(){
+   moveCounter++;
+
+   document.getElementById("moveCounter").innerHTML= moveCounter;
+
+ }
 
  function lockCards(lock){
    let cardsElements = document.getElementsByClassName("card");
@@ -29,6 +90,13 @@ let opennedCards = [];
 
 
  function showCard(){
+
+   if(!running){
+     running = true;
+     cronometer();
+   }
+
+
    this.classList.add("open");
    this.classList.add("show");
 
@@ -59,6 +127,8 @@ let opennedCards = [];
 
        //Unlock the deck
        lockCards(false);
+       incrementMove();
+       testVictory();
 
      }, 1000);
    }
@@ -101,8 +171,38 @@ let Card = function(symbol){
     return obj;
 }
 
+let time = {
+  'seconds': 0,
+  'minutes': 0,
+  'hours': 0,
+}
+
+function restartCronometer(){
+  time.seconds = 0;
+  time.minutes = 0;
+  time.hours = 0;
+
+  updateCronometer();
+}
+
+function updateCronometer(){
+  if (time.hours < 10) document.getElementById("hours").innerHTML = "0" + time.hours + ":"; else document.getElementById("hours").innerHTML = time.hours + ":";
+  if (time.seconds < 10) document.getElementById("seconds").innerHTML = "0" + time.seconds; else document.getElementById("seconds").innerHTML = time.seconds;
+  if (time.minutes < 10) document.getElementById("minutes").innerHTML = "0" + time.minutes + ":"; else document.getElementById("minutes").innerHTML = time.minutes + ":";
+}
+
+function cronometer(){
+  interv = window.setInterval(function() {
+        updateCronometer();
+        time.seconds++;
+    },1000);
+}
+
+
 let table = Table(numberOfCards);
 table.fillIn();
+//window.onload=cronometer();
+
 
 
 // Shuffle function from http://stackoverflow.com/a/2450976
