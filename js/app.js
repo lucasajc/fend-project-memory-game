@@ -2,7 +2,14 @@
  * Create a list that holds all of your cards
  */
 const numberOfCards = 16;
-const images = ["fa fa-diamond","fa fa-paper-plane-o","fa fa-anchor","fa fa-bolt","fa fa-cube","fa fa-bicycle","fa fa-bomb","fa fa-leaf"];
+//const images = ["fa fa-diamond","fa fa-paper-plane-o","fa fa-anchor","fa fa-bolt","fa fa-cube","fa fa-bicycle","fa fa-bomb","fa fa-leaf"];
+const images = ["c1","c2","c3","c4","c5","c6","c7","c8"];
+
+const audioCoin = new Audio('./audio/smw_coin.wav');
+const audioPipe = new Audio('./audio/smw_pipe.wav');
+const audioKick = new Audio('./audio/smw_kick.wav');
+const audioGate = new Audio('./audio/smw_midway_gate.wav');
+const audioClear = new Audio('./audio/smw_castle_clear.wav');
 
 let opennedCards = [];
 let moveCounter = 0;
@@ -18,6 +25,12 @@ document.getElementById("restart").addEventListener("click", restart);
  *   - add each card's HTML to the page
  */
 
+function openPopUp() {
+    let popup = document.getElementById("victoryPopup");
+    popup.classList.toggle("show");
+    //audioClear.play();
+}
+
  function testVictory(){
    let cardsRemaining = numberOfCards;
 
@@ -29,6 +42,8 @@ document.getElementById("restart").addEventListener("click", restart);
 
    if(cardsRemaining == 0){
 
+     audioClear.play();
+
      if((moveCounter<=20)&&(moveCounter>=0)){
        stars = 3;
      }
@@ -39,6 +54,7 @@ document.getElementById("restart").addEventListener("click", restart);
        stars = 1;
      }
 
+
      window.confirm("Victory! Stars: "+stars);
      restart();
    }
@@ -48,14 +64,18 @@ document.getElementById("restart").addEventListener("click", restart);
  function restart(){
    //unlock the cards
    lockCards(false);
+   openPopUp();
+   audioGate.play();
 
    //clear components and variables
    document.getElementById("deck").innerHTML='';
    opennedCards = [];
    moveCounter = -1;
    incrementMove();
+   if(running){
+     window.clearInterval(interv);
+   }
    running = false;
-   window.clearInterval(interv);
    restartCronometer();
 
    //close all cards
@@ -70,7 +90,7 @@ document.getElementById("restart").addEventListener("click", restart);
  function incrementMove(){
    moveCounter++;
 
-   document.getElementById("moveCounter").innerHTML= moveCounter;
+   document.getElementById("moveCounter").innerHTML= moveCounter + " moves";
 
  }
 
@@ -96,9 +116,16 @@ document.getElementById("restart").addEventListener("click", restart);
      cronometer();
    }
 
+   audioKick.play();
 
+   this.classList.remove("pulse");
+   this.classList.remove("fadeIn");
+   this.firstChild.classList.remove("hidden");
    this.classList.add("open");
    this.classList.add("show");
+   this.classList.add("animated");
+   this.classList.add("flip");
+
 
    if((opennedCards.length == 0)&&(table.cards[this.id].open==false)){
      opennedCards[0] = this.id;
@@ -115,12 +142,22 @@ document.getElementById("restart").addEventListener("click", restart);
        for(i=0;i<opennedCards.length;i++){
          if(table.cards[opennedCards[0]].symbol != table.cards[opennedCards[1]].symbol){
            table.cards[opennedCards[i]].open = false;
+           audioPipe.play();
+           document.getElementById(opennedCards[i]).classList.add('pulse');
+           document.getElementById(opennedCards[i]).classList.add('fadeIn');
+           document.getElementById(opennedCards[i]).firstChild.classList.add('hidden');
            document.getElementById(opennedCards[i]).classList.remove('open');
            document.getElementById(opennedCards[i]).classList.remove('show');
+           document.getElementById(opennedCards[i]).classList.remove('flip');
+
+
          }
          else{
            table.cards[opennedCards[i]].open = true;
+           audioCoin.play();
            document.getElementById(opennedCards[i]).classList.add('match');
+           document.getElementById(opennedCards[i]).classList.remove('flip');
+           document.getElementById(opennedCards[i]).classList.add('rubberBand');
          }
        }
        opennedCards = [];
@@ -130,7 +167,7 @@ document.getElementById("restart").addEventListener("click", restart);
        incrementMove();
        testVictory();
 
-     }, 1000);
+     }, 1500);
    }
  }
 
@@ -154,7 +191,7 @@ document.getElementById("restart").addEventListener("click", restart);
 
    for(i=0;i<this.size;i++){
      this.cards[i] = Card(imagesArray[i]);
-     document.getElementById("deck").innerHTML+='<li class="card" id="'+i+'"><i class="'+imagesArray[i]+'"></i></li>';
+     document.getElementById("deck").innerHTML+='<li class="card" id="'+i+'"><i class="box hidden '+imagesArray[i]+'"></i></li>';
    }
 
    let cardsElements = document.getElementsByClassName("card");
@@ -186,6 +223,8 @@ function restartCronometer(){
 }
 
 function updateCronometer(){
+  if (time.seconds == 60) { time.minutes++; time.seconds = 0; }
+  if (time.minutes == 60) { time.hours++; time.seconds = 0; time.minutes = 0; }
   if (time.hours < 10) document.getElementById("hours").innerHTML = "0" + time.hours + ":"; else document.getElementById("hours").innerHTML = time.hours + ":";
   if (time.seconds < 10) document.getElementById("seconds").innerHTML = "0" + time.seconds; else document.getElementById("seconds").innerHTML = time.seconds;
   if (time.minutes < 10) document.getElementById("minutes").innerHTML = "0" + time.minutes + ":"; else document.getElementById("minutes").innerHTML = time.minutes + ":";
