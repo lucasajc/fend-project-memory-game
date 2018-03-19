@@ -1,20 +1,24 @@
-# Memory Game Project
+# Super Mario Memory Game Project
 
 ## Table of Contents
 
 * [Instructions](#instructions)
+* [Dependencies](#dependencies)
 * [Contributing](#contributing)
 
 ## Instructions
 
-The starter project has some HTML and CSS styling to display a static version of the Memory Game project. You'll need to convert this project from a static project to an interactive one. This will require modifying the HTML and CSS files, but primarily the JavaScript file.
+This is a memory game inspired by super mario world (despite having the power wing of super mario 3).
 
-To get started, open `js/app.js` and start building out the app's functionality
+Beat the game by hitting all the combinations and challenge yourself to get 3 stars in the shortest possible time. Or use the reload button to restart the game.
 
-For specific, detailed instructions, look at the project instructions in the [Udacity Classroom](https://classroom.udacity.com/me).
+## Dependencies
+
+* [Animate.css](https://daneden.github.io/animate.css/) - a bunch of cool, fun, and cross-browser animations
+* [Super Mario 256](https://www.dafont.com/pt/super-mario-256.font) - Font: almost an exact replica of the mario letters
 
 ## Contributing
 
-This repository is the starter code for _all_ Udacity students. Therefore, we most likely will not accept pull requests.
+This repository is forked from the starter code of Udacity.
 
 For details, check out [CONTRIBUTING.md](CONTRIBUTING.md).

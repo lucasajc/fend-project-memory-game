@@ -2,7 +2,7 @@
  * Create a list that holds all of your cards
  */
 const numberOfCards = 16;
-//const images = ["fa fa-diamond","fa fa-paper-plane-o","fa fa-anchor","fa fa-bolt","fa fa-cube","fa fa-bicycle","fa fa-bomb","fa fa-leaf"];
+const waitTime = 1350;
 const images = ["c1","c2","c3","c4","c5","c6","c7","c8"];
 
 const audioCoin = new Audio('./audio/smw_coin.wav');
@@ -25,11 +25,40 @@ document.getElementById("restart").addEventListener("click", restart);
  *   - add each card's HTML to the page
  */
 
-function openPopUp() {
-    let popup = document.getElementById("victoryPopup");
-    popup.classList.toggle("show");
-    //audioClear.play();
+//show the stars on the screen
+function fillStars(stars){
+  let starBox = document.getElementById("starBox");
+  for(i=0;i<stars;i++){
+    starBox.innerHTML +='<li><i class="fa fa-star"></i></li>';
+  }
 }
+
+//clear the stars on the screen
+function clearStars(){
+  let starBox = document.getElementById("starBox");
+  starBox.innerHTML='';
+}
+
+//open or hide the victory pop up
+function openPopUp(open) {
+    let popup = document.getElementById("victoryPopup");
+    if(open){
+      popup.classList.remove("hide");
+      popup.classList.add("show");
+    }
+    else{
+      popup.classList.remove("show");
+      popup.classList.add("hide");
+    }
+}
+
+ //erase the cronometer interval (pause it)
+ function eraseInterval(){
+  if(running){
+    window.clearInterval(interv);
+  }
+  running = false;
+ }
 
  function testVictory(){
    let cardsRemaining = numberOfCards;
@@ -44,38 +73,40 @@ function openPopUp() {
 
      audioClear.play();
 
-     if((moveCounter<=20)&&(moveCounter>=0)){
+     if((moveCounter<=14)&&(moveCounter>=0)){
        stars = 3;
      }
-     else if((moveCounter<=25)&&(moveCounter>20)){
+     else if((moveCounter<=20)&&(moveCounter>14)){
        stars = 2;
      }
      else{
        stars = 1;
      }
 
+     fillStars(stars);
+     openPopUp(true);
+     eraseInterval();
 
-     window.confirm("Victory! Stars: "+stars);
-     restart();
    }
-
  }
 
  function restart(){
+   let popup = document.getElementById("victoryPopup");
+
    //unlock the cards
    lockCards(false);
-   openPopUp();
    audioGate.play();
+   openPopUp(false);
 
    //clear components and variables
    document.getElementById("deck").innerHTML='';
    opennedCards = [];
    moveCounter = -1;
    incrementMove();
-   if(running){
-     window.clearInterval(interv);
-   }
-   running = false;
+   clearStars();
+
+   //clear cronometer
+   eraseInterval();
    restartCronometer();
 
    //close all cards
@@ -89,11 +120,10 @@ function openPopUp() {
 
  function incrementMove(){
    moveCounter++;
-
    document.getElementById("moveCounter").innerHTML= moveCounter + " moves";
-
  }
 
+//lock or unlock the deck preventing user miss click
  function lockCards(lock){
    let cardsElements = document.getElementsByClassName("card");
    for(i=0;i<numberOfCards;i++){
@@ -108,7 +138,7 @@ function openPopUp() {
    }
  }
 
-
+//game main dynamics
  function showCard(){
 
    if(!running){
@@ -118,6 +148,7 @@ function openPopUp() {
 
    audioKick.play();
 
+   //create animation and changes the state of the game on screen
    this.classList.remove("pulse");
    this.classList.remove("fadeIn");
    this.firstChild.classList.remove("hidden");
@@ -126,7 +157,7 @@ function openPopUp() {
    this.classList.add("animated");
    this.classList.add("flip");
 
-
+   //test if the card is open
    if((opennedCards.length == 0)&&(table.cards[this.id].open==false)){
      opennedCards[0] = this.id;
      table.cards[this.id].open = true;
@@ -143,23 +174,24 @@ function openPopUp() {
          if(table.cards[opennedCards[0]].symbol != table.cards[opennedCards[1]].symbol){
            table.cards[opennedCards[i]].open = false;
            audioPipe.play();
+           //create animation and changes the state of the game on screen
            document.getElementById(opennedCards[i]).classList.add('pulse');
            document.getElementById(opennedCards[i]).classList.add('fadeIn');
            document.getElementById(opennedCards[i]).firstChild.classList.add('hidden');
            document.getElementById(opennedCards[i]).classList.remove('open');
            document.getElementById(opennedCards[i]).classList.remove('show');
            document.getElementById(opennedCards[i]).classList.remove('flip');
-
-
          }
          else{
            table.cards[opennedCards[i]].open = true;
            audioCoin.play();
+           //create animation and changes the state of the game on screen
            document.getElementById(opennedCards[i]).classList.add('match');
            document.getElementById(opennedCards[i]).classList.remove('flip');
            document.getElementById(opennedCards[i]).classList.add('rubberBand');
          }
        }
+       //clear the "openned cards" buffer
        opennedCards = [];
 
        //Unlock the deck
@@ -167,10 +199,11 @@ function openPopUp() {
        incrementMove();
        testVictory();
 
-     }, 1500);
+     }, waitTime);
    }
  }
 
+ //table class
  let Table = function(size){
      let obj = Object.create(Table.prototype);
      obj.size = size;
@@ -178,6 +211,7 @@ function openPopUp() {
      obj.deck = document.getElementById("deck");
      return obj;
  }
+ //fill the table with new cards
  Table.prototype.fillIn = function(){
 
    let imagesArray = [];
@@ -201,6 +235,7 @@ function openPopUp() {
    }
  }
 
+//card class
 let Card = function(symbol){
     let obj = Object.create(Card.prototype);
     obj.open = false;
@@ -237,16 +272,9 @@ function cronometer(){
     },1000);
 }
 
-
-let table = Table(numberOfCards);
-table.fillIn();
-//window.onload=cronometer();
-
-
-
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+    let currentIndex = array.length, temporaryValue, randomIndex;
 
     while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
@@ -254,9 +282,7 @@ function shuffle(array) {
         temporaryValue = array[currentIndex];
         array[currentIndex] = array[randomIndex];
         array[randomIndex] = temporaryValue;
-        //Object.
     }
-
     return array;
 }
 
@@ -271,3 +297,7 @@ function shuffle(array) {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
+
+ //create the table(deck) and fill it
+ let table = Table(numberOfCards);
+ table.fillIn();
