@@ -13,10 +13,11 @@ const audioClear = new Audio('./audio/smw_castle_clear.wav');
 
 let opennedCards = [];
 let moveCounter = 0;
-let stars = 0;
+let stars = 3;
 let running = false;
 
 document.getElementById("restart").addEventListener("click", restart);
+document.getElementById("restart-end-container").addEventListener("click", restart);
 
 /*
  * Display the cards on the page
@@ -25,8 +26,29 @@ document.getElementById("restart").addEventListener("click", restart);
  *   - add each card's HTML to the page
  */
 
+function updateStars(){
+
+  if((moveCounter<=14)&&(moveCounter>=0)){
+    stars = 3;
+  }
+  else if((moveCounter<=20)&&(moveCounter>14)){
+    stars = 2;
+  }
+  else{
+    stars = 1;
+  }
+
+  let starBox = document.getElementById("starBoxS");
+  starBoxS.innerHTML='';
+  for(i=0;i<stars;i++){
+    starBoxS.innerHTML +='<li class="fa fa-star"></li>';
+  }
+
+}
+
 //show the stars on the screen
-function fillStars(stars){
+function fillStars(){
+  updateStars(stars);
   let starBox = document.getElementById("starBox");
   for(i=0;i<stars;i++){
     starBox.innerHTML +='<li><i class="fa fa-star"></i></li>';
@@ -73,16 +95,13 @@ function openPopUp(open) {
 
      audioClear.play();
 
-     if((moveCounter<=14)&&(moveCounter>=0)){
-       stars = 3;
-     }
-     else if((moveCounter<=20)&&(moveCounter>14)){
-       stars = 2;
-     }
-     else{
-       stars = 1;
-     }
+     if (time.hours < 10) document.getElementById("hoursS").innerHTML = "0" + time.hours + ":"; else document.getElementById("hoursS").innerHTML = time.hours + ":";
+     if (time.seconds < 10) document.getElementById("secondsS").innerHTML = "0" + time.seconds; else document.getElementById("secondsS").innerHTML = time.seconds;
+     if (time.minutes < 10) document.getElementById("minutesS").innerHTML = "0" + time.minutes + ":"; else document.getElementById("minutesS").innerHTML = time.minutes + ":";
 
+     document.getElementById("movescore").innerHTML = "/ Moves: "+moveCounter
+
+     updateStars(stars);
      fillStars(stars);
      openPopUp(true);
      eraseInterval();
@@ -96,6 +115,8 @@ function openPopUp(open) {
    //unlock the cards
    lockCards(false);
    audioGate.play();
+   audioClear.pause();
+   audioClear.currentTime = 0;
    openPopUp(false);
 
    //clear components and variables
@@ -104,6 +125,8 @@ function openPopUp(open) {
    moveCounter = -1;
    incrementMove();
    clearStars();
+   stars = 3;
+   updateStars(stars);
 
    //clear cronometer
    eraseInterval();
@@ -197,6 +220,9 @@ function openPopUp(open) {
        //Unlock the deck
        lockCards(false);
        incrementMove();
+       console.log("before"+stars);
+       updateStars();
+       console.log("after"+stars);
        testVictory();
 
      }, waitTime);
@@ -298,6 +324,12 @@ function shuffle(array) {
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
 
- //create the table(deck) and fill it
+ audioCoin.load;
+ audioPipe.load;
+ audioKick.load;
+ audioGate.load;
+ audioClear.load;
+
  let table = Table(numberOfCards);
  table.fillIn();
+ updateStars(stars);

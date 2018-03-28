@@ -12,6 +12,8 @@ This is a memory game inspired by super mario world (despite having the power wi
 
 Beat the game by hitting all the combinations and challenge yourself to get 3 stars in the shortest possible time. Or use the reload button to restart the game.
 
+To run the game, just open the **index.html** file in your browser!
+
 ## Dependencies
 
 * [Animate.css](https://daneden.github.io/animate.css/) - a bunch of cool, fun, and cross-browser animations

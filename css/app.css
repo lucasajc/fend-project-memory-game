@@ -54,8 +54,8 @@ h2 {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    transform: scale(0.825);
-    margin-top:-80px;
+    transform: scale(0.7);
+    margin-top:-145px;
 }
 
 /*
@@ -119,9 +119,10 @@ h2 {
 }
 
 .score-panel .stars {
-    margin: 0;
+    margin-top: 20px;
     padding: 0;
-    display: inline-block;
+    display: block;
+    font-size: 70px;
     position:relative;
     z-index: 1;
     color: #FFD700;
@@ -180,9 +181,9 @@ h2 {
 /* Popup container */
 .popup {
     position: absolute;
-    margin-left: -325px;
-    margin-top: -115px;
-    font-size:50px;
+    margin-left: -225px;
+    margin-top: -130px;
+    font-size:30px;
     align:center;
 }
 
@@ -239,7 +240,7 @@ h2 {
 .cronometer{
   font-size:2em;
   color:#7FFF00;
-  width:6em;
+  width:5em;
   background: linear-gradient(290deg, 	#000080 0%, #1E90FF 100%);
   padding:0.5em;
   margin-left:0.2em;
@@ -263,7 +264,7 @@ h2 {
 .moves{
   font-size:2em;
   color:#7FFF00;
-  width:8em;
+  width:7.5em;
   background: linear-gradient(290deg, 	#000080 0%, #1E90FF 100%);
   padding:0.5em;
   border-radius: 8px;
@@ -271,12 +272,52 @@ h2 {
   display:inline;
 }
 
+.stars-score{
+  height: 4em;
+  color:#7FFF00;
+  width:7em;
+  background: linear-gradient(290deg, 	#000080 0%, #1E90FF 100%);
+  padding:0.5em;
+  border-radius: 8px;
+  box-shadow: 12px 15px 20px 0 rgba(46, 61, 73, 0.5);
+  display:inline;
+  padding-top:1em;
+}
+
+.stars-score .stars {
+    padding: 0;
+    display: inline;
+    font-size: 2em;
+    position:relative;
+    color: #FFD700;
+}
+
 .score-panel-bottom{
   padding-bottom: 0.5em;
   margin: auto;
-  width: 36em;
+  width: 40em;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  font-size: 12px;
+}
+
+#restart-end-container{
+  height:100px;
+  color:#7FFF00;
+  background: linear-gradient(290deg, 	#000080 0%, #1E90FF 100%);
+  padding:0.5em;
+  border-radius: 8px;
+  box-shadow: 12px 15px 20px 0 rgba(46, 61, 73, 0.5);
+  margin-top:100px;
+}
+
+#movescore{
+  display:inline;
+}
+
+#restart-end{
+
+  font-size: 50px;
 }
